@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800&display=swap">
+<title>PAUSE Screens</title>
+<style>
+
+/* Layout: a payment timeline across the top, then the customer's Pause screen and the specialist's Hold workbench side by side, each with numbered notes. */
+:root{
+  --ink:#1F2733; --ink-soft:#3A4452; --muted:#5B6573;
+  --page:#FFFFFF; --panel-a:#EEF2F6; --panel-b:#F6F1EB; --card:#FFFFFF; --line:#D4DAE1;
+  --ai:#DDF2EE; --ai-line:#2E9C8C; --ai-ink:#12796E;
+  --person:#FDE6CF; --person-line:#E28A2B; --person-ink:#A65A0C;
+  --badge:#D9731A; --band:#343C49;
+  --wk1:#FFFFFF; --wk2:#DDF2EE; --wk3:#B7E4DC; --wk4:#7FCCBF;
+  --f:"Noto Sans","Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.35;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px}
+.fig{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-weight:800;letter-spacing:.04em;text-transform:uppercase;font-size:15px;color:var(--ink-soft)}
+.eyebrow span{text-transform:none;font-weight:400;letter-spacing:0}
+.hint{font-size:14px;color:var(--muted);margin-top:2px}
+.static .hint{display:none}
+/* timeline */
+.weeks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:30px;position:relative}
+.wk{position:relative;display:flex;align-items:center;gap:12px;border:2px solid var(--ai-line);border-radius:10px;padding:10px 14px;background:var(--wk1);cursor:pointer;text-align:left;font:inherit;color:inherit}
+.wk:nth-child(2){background:var(--wk2)}.wk:nth-child(3){background:var(--wk3)}.wk:nth-child(4){background:var(--wk4)}
+.wk:not(:last-child)::after{content:"";position:absolute;right:-27px;top:50%;width:24px;height:16px;transform:translateY(-50%);
+  background:var(--band);clip-path:polygon(0 30%,60% 30%,60% 0,100% 50%,60% 100%,60% 70%,0 70%)}
+.wk:focus-visible{outline:3px solid var(--badge);outline-offset:2px}
+.wk.on{box-shadow:0 0 0 3px var(--badge)}
+.wk .ic{flex:none;width:40px;height:40px;border-radius:50%;border:2px solid var(--ai-ink);display:grid;place-items:center;color:var(--ai-ink);background:var(--card)}
+.wk b{display:block;font-size:19px;font-weight:700}
+.wk small{font-size:16px;color:var(--ink-soft)} .wk small strong{color:var(--ai-ink)}
+.bars{margin-left:auto;display:flex;align-items:flex-end;gap:3px;height:24px}
+.bars i{width:6px;border-radius:1px;background:#C7CFD8}.bars i.f{background:var(--band)}
+.bars i:nth-child(1){height:30%}.bars i:nth-child(2){height:55%}.bars i:nth-child(3){height:78%}.bars i:nth-child(4){height:100%}
+/* panels */
+.panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:30px}
+.panel{border-radius:12px;overflow:hidden;border:1px solid var(--line);transition:box-shadow .2s;display:flex;flex-direction:column}
+.panel.lit{box-shadow:0 0 0 3px var(--badge)}
+.phead{background:var(--band);color:#fff;display:flex;align-items:center;gap:10px;padding:10px 14px;font-weight:700;font-size:17px;letter-spacing:.02em;text-transform:uppercase}
+.phead .l{width:26px;height:26px;border-radius:50%;background:#fff;color:var(--band);display:grid;place-items:center;font-weight:800;font-size:15px}
+.pbody{flex:1;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:18px;padding:18px}
+#A .pbody{background:var(--panel-a)} #B .pbody{background:var(--panel-b)}
+.screenwrap{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px}
+.rail{position:relative}
+.n{width:28px;height:28px;border-radius:50%;background:var(--badge);color:#fff;font-weight:700;font-size:15px;display:grid;place-items:center;flex:none}
+.rail .n{position:absolute;left:0}
+/* phone */
+.phone{border:5px solid var(--ink);border-radius:26px;background:var(--card);padding:16px 14px;display:flex;flex-direction:column;gap:10px}
+.screen{background:var(--card);border:5px solid var(--ink);border-top-width:34px;border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:10px;position:relative}
+.screen::before{content:attr(data-bar);position:absolute;top:-28px;left:6px;right:6px;color:#fff;font-weight:700;font-size:15px}
+.amt{text-align:center;font-weight:700;font-size:19px}
+.blk{border:1.5px solid var(--line);border-radius:8px;padding:9px 11px;font-size:14.5px;transition:box-shadow .15s}
+.blk h4{margin:0 0 3px;font-size:15px;font-weight:700}
+.blk ul{margin:0;padding-left:16px}
+.blk.ai{background:var(--ai);border-color:var(--ai-line)}
+.blk.person{background:var(--person);border-color:var(--person-line)}
+.blk.grey{background:#F1F3F6}
+.alert{background:var(--person);border:1.5px solid var(--person-line);border-radius:8px;padding:9px 11px;text-align:center;font-weight:700;font-size:16px}
+.btn{font:inherit;font-size:14.5px;font-weight:700;border:1.5px solid var(--ink);background:var(--card);color:var(--ink);border-radius:6px;padding:6px 8px;cursor:pointer}
+.btn:hover{background:#F1F3F6}.btn:focus-visible{outline:3px solid var(--badge);outline-offset:2px}
+.btn.dark{background:var(--band);color:#fff;border-color:var(--band);width:100%}
+.btn.orange{border-color:var(--person-line);color:var(--person-ink)}
+.btn.pill{border-radius:999px;border-color:var(--ai-line);color:var(--ai-ink);padding:3px 10px;font-size:13.5px}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.row2{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.right{display:flex;justify-content:flex-end;margin-top:6px}
+.out{font-size:13.5px;color:var(--ai-ink);font-weight:600;min-height:0}
+.out:empty{display:none}
+.judge label{display:inline-flex;align-items:center;gap:4px;margin-right:8px;cursor:pointer}
+.judge input{accent-color:var(--person-line)}
+.locked{color:var(--muted);font-style:italic}
+/* notes */
+.notes{display:flex;flex-direction:column;gap:10px}
+.note{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;cursor:default;transition:box-shadow .15s}
+.note h3{margin:0;font-size:18px;font-weight:700;display:flex;gap:6px;align-items:center}
+.note p{margin:3px 0 0;color:var(--ink-soft);font-size:16px}
+.note:hover,.note:focus-within,.note.hl{box-shadow:0 0 0 2px var(--badge)}
+.blk.hl,.alert.hl,.hlbtns.hl{box-shadow:0 0 0 3px var(--badge)}
+.cite{white-space:nowrap}
+/* key */
+.key{display:flex;flex-wrap:wrap;gap:8px 22px;align-items:center;font-size:15.5px;color:var(--ink-soft)}
+.key span{display:inline-flex;align-items:center;gap:7px}
+.sw{width:26px;height:16px;border-radius:3px;border:1.5px solid}
+.sw.a{background:var(--ai);border-color:var(--ai-line)}.sw.p{background:var(--person);border-color:var(--person-line)}
+.key .n{width:22px;height:22px;font-size:12px}
+svg{display:block}
+@media (max-width:980px){.panels{grid-template-columns:1fr}}
+@media (max-width:640px){.weeks{grid-template-columns:1fr;gap:10px}.phead{font-size:15px}.wk::after{display:none}.pbody{grid-template-columns:1fr}.rail{display:none}.screenwrap{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* static render for the report */
+.static .fig{max-width:none;width:1290px}
+</style>
+
+</head><body>
+<div class="fig" id="fig">
+  <div>
+    <div class="eyebrow">One customer's payments <span>(example)</span></div>
+    <div class="hint">Select a week to see what PAUSE does. Hover over a note to see the part of the screen it describes.</div>
+  </div>
+
+  <div class="weeks" role="group" aria-label="Payment timeline">
+    <button class="wk" data-w="1" id="wk1"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span><b>Week 1 · £250</b><small><strong>Proceed</strong> · goes through</small></span><span class="bars"><i class="f"></i><i></i><i></i><i></i></span></button>
+    <button class="wk" data-w="2" id="wk2"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3.5L2.8 19.5h18.4z"/><path d="M12 9.5v4.5M12 16.8v.2"/></svg></span><span><b>Week 2 · £900</b><small><strong>Warn</strong> · continues</small></span><span class="bars"><i class="f"></i><i class="f"></i><i></i><i></i></span></button>
+    <button class="wk" data-w="3" id="wk3"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7M14 8.5v7"/></svg></span><span><b>Week 3 · £2,500</b><small><strong>Pause</strong> · see A below</small></span><span class="bars"><i class="f"></i><i class="f"></i><i class="f"></i><i></i></span></button>
+    <button class="wk" data-w="4" id="wk4"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 13V6.5a1.5 1.5 0 013 0V12M11 11V5a1.5 1.5 0 013 0v6M14 11V6.5a1.5 1.5 0 013 0V14c0 4-2.5 6.5-6 6.5-2.6 0-4.4-1.4-5.6-3.6L3.6 13.6a1.5 1.5 0 012.5-1.6L8 14"/></svg></span><span><b>Week 4 · £8,000</b><small><strong>Hold</strong> · see B below</small></span><span class="bars"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i></span></button>
+  </div>
+  <div class="out" id="wkout" aria-live="polite"></div>
+
+  <div class="panels">
+    <!-- A -->
+    <section class="panel" id="A" aria-label="What the customer sees at Pause">
+      <div class="phead"><span class="l">A</span><svg width="18" height="20" viewBox="0 0 18 22" fill="none" stroke="#fff" stroke-width="2"><rect x="2" y="1" width="14" height="20" rx="3"/><path d="M7 17.5h4"/></svg>What the customer sees at Pause (week 3)</div>
+      <div class="pbody">
+        <div class="screenwrap">
+          <div class="rail" id="railA"></div>
+          <div class="phone" id="phone">
+            <div class="amt">£2,500 to TradeMax</div>
+            <div class="alert" data-n="0">We've paused this payment so you can check it first</div>
+            <div class="blk ai" data-n="1"><h4>Why we paused it</h4><ul><li>A larger payment to a new firm</li><li>It claims to be FCA regulated</li></ul></div>
+            <div class="blk" data-n="2"><h4>Is TradeMax on the FCA Register?</h4>Genuine firms are listed<div class="right"><button class="btn pill" id="check">Check now ›</button></div><div class="out" id="checkout" aria-live="polite"></div></div>
+            <div class="blk grey" data-n="3"><h4>Two quick questions</h4>Can you withdraw? <b>Not sure</b><br>Told to keep it secret? <b>No</b></div>
+            <div class="hlbtns" data-n="4" style="display:flex;flex-direction:column;gap:8px;border-radius:8px">
+              <button class="btn dark" id="think">❚❚&nbsp; Pause and think</button>
+              <div class="row3"><button class="btn" data-act="Continue">Continue</button><button class="btn" data-act="Call me">Call me</button><button class="btn orange" data-act="Contest">Contest</button></div>
+              <div class="out" id="custout" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+        <div class="notes">
+          <div class="note" data-for="1" tabindex="0"><span class="n">1</span><div><h3>Plain reasons</h3><p>Everyday words; large text, audio, languages <span class="cite">[44]</span></p></div></div>
+          <div class="note" data-for="2" tabindex="0"><span class="n">2</span><div><h3>One thing to check</h3><p>Counters the false broker claim <span class="cite">[8], [28], [33]</span></p></div></div>
+          <div class="note" data-for="3" tabindex="0"><span class="n">3</span><div><h3>Time to think</h3><p>Answers can raise the risk, never lower it <span class="cite">[6]</span></p></div></div>
+          <div class="note" data-for="4" tabindex="0"><span class="n">4</span><div><h3>Customer still decides</h3><p>Continue, wait, call or contest <span class="cite">[16]</span></p></div></div>
+        </div>
+      </div>
+    </section>
+    <!-- B -->
+    <section class="panel" id="B" aria-label="What the specialist sees at Hold">
+      <div class="phead"><span class="l">B</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M4 15v-3a8 8 0 0116 0v3"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/></svg>What the specialist sees at Hold (week 4)</div>
+      <div class="pbody">
+        <div class="screenwrap">
+          <div class="rail" id="railB"></div>
+          <div class="screen" id="desk" data-bar="✋  Case 4471 · £8,000 held · 2 h limit">
+            <div class="blk grey" data-n="5"><h4>The evidence</h4>Payments: £250 up to £8,000<br>Likely tactic: false broker claim<br>Answers: not sure · no</div>
+            <div class="blk person judge" data-n="6"><h4>Your judgement first</h4>
+              <label><input type="radio" name="j" value="Likely scam" id="j1">Likely scam</label><label><input type="radio" name="j" value="Unsure" id="j2">Unsure</label><label><input type="radio" name="j" value="Genuine" id="j3">Genuine</label>
+              <div>Reason: payments are escalating</div></div>
+            <div class="blk ai" data-n="7"><h4>AI score, shown after</h4><div id="score"><span class="locked">Record your judgement to see the AI's view</span></div></div>
+            <div class="hlbtns" data-n="8" style="display:flex;flex-direction:column;gap:6px;border-radius:8px">
+              <div style="font-weight:700;font-size:15px">Your decision</div>
+              <div class="row2"><button class="btn" data-dec="Released">Release</button><button class="btn" data-dec="Stopped">Stop</button><button class="btn" data-dec="Reported to police">Report to police</button><button class="btn" data-dec="Customer contacted securely">Contact securely</button></div>
+              <div class="out" id="decout" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+        <div class="notes">
+          <div class="note" data-for="5" tabindex="0"><span class="n">5</span><div><h3>Evidence first</h3><p>Payments, tactic and answers come first <span class="cite">[18], [25]</span></p></div></div>
+          <div class="note" data-for="6" tabindex="0"><span class="n">6</span><div><h3>Own judgement first</h3><p>Recorded before the score <span class="cite">[45]</span></p></div></div>
+          <div class="note" data-for="7" tabindex="0"><span class="n">7</span><div><h3>Then the AI's view</h3><p>Disagreements logged to check reliance <span class="cite">[46]</span></p></div></div>
+          <div class="note" data-for="8" tabindex="0"><span class="n">8</span><div><h3>A person decides</h3><p>Contact only via the app or card number <span class="cite">[1]</span></p></div></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="key"><span><i class="sw a"></i>AI output</span><span><i class="sw p"></i>A person decides</span><span><span class="bars" style="height:16px"><i class="f"></i><i class="f"></i><i></i><i></i></span>Risk level</span><span><span class="n">1</span>Numbers link each part of a screen to its note</span></div>
+</div>
+
+<script>
+(function(){
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const isStatic=location.hash==='#static';
+  if(isStatic) document.documentElement.classList.add('static');
+  // number badges beside each screen part, aligned to its block
+  function placeRail(rail,screen){
+    rail.innerHTML='';
+    screen.querySelectorAll('[data-n]').forEach(el=>{
+      const n=+el.dataset.n; if(!n) return;
+      const top=el.getBoundingClientRect().top-rail.getBoundingClientRect().top+el.offsetHeight/2-14;
+      const b=document.createElement('span'); b.className='n'; b.textContent=n; b.style.top=top+'px'; rail.appendChild(b);
+    });
+  }
+  function rails(){placeRail($('#railA'),$('#phone'));placeRail($('#railB'),$('#desk'));}
+  // week timeline
+  const msgs={1:'Week 1: low risk. The payment goes straight through with no message.',2:'Week 2: moderate risk. A short warning the customer can skip; the payment continues.',3:'Week 3: higher risk. PAUSE shows screen A and asks two questions. The customer still decides.',4:'Week 4: highest risk. The payment is held and a specialist decides using screen B.'};
+  $$('.wk').forEach(b=>b.addEventListener('click',()=>{
+    $$('.wk').forEach(x=>x.classList.toggle('on',x===b));
+    $('#wkout').textContent=msgs[b.dataset.w];
+    $('#A').classList.toggle('lit',b.dataset.w==='3'); $('#B').classList.toggle('lit',b.dataset.w==='4');
+  }));
+  // notes highlight their screen part
+  $$('.note').forEach(n=>{
+    const t=()=>document.querySelector('[data-n="'+n.dataset.for+'"]');
+    const on=()=>t().classList.add('hl'), off=()=>t().classList.remove('hl');
+    n.addEventListener('mouseenter',on);n.addEventListener('mouseleave',off);n.addEventListener('focus',on);n.addEventListener('blur',off);
+  });
+  // customer screen
+  $('#check').addEventListener('click',()=>{$('#checkout').textContent='Example result: TradeMax is not on the FCA Register. Genuine investment firms are.';rails();});
+  $('#think').addEventListener('click',()=>{$('#custout').textContent='The payment waits. Nothing is sent until you choose.';rails();});
+  $$('[data-act]').forEach(b=>b.addEventListener('click',()=>{
+    const m={'Continue':'You chose to continue. The payment is sent and your choice is recorded.','Call me':'A specialist will call you in the app. We never ask you to call a number from a message.','Contest':'Your challenge goes to a person, who must explain the decision.'};
+    $('#custout').textContent=m[b.dataset.act];rails();}));
+  // specialist screen: AI score only after the specialist's own judgement
+  function reveal(v){
+    $('#score').innerHTML='<b>0.87</b> · high risk · '+(v==='Likely scam'?'agrees with you':'<span style="color:var(--person-ink);font-weight:700">differs from you, so this case is logged</span>');rails();
+  }
+  $$('input[name=j]').forEach(r=>r.addEventListener('change',()=>reveal(r.value)));
+  $$('[data-dec]').forEach(b=>b.addEventListener('click',()=>{
+    const j=document.querySelector('input[name=j]:checked');
+    $('#decout').textContent=j?(b.dataset.dec+'. Decision, reason and AI score saved to the audit record.'):'Record your own judgement first.';rails();}));
+  if(isStatic){ $('#j1').checked=true; reveal('Likely scam'); }
+  addEventListener('resize',rails); (document.fonts?document.fonts.ready:Promise.resolve()).then(rails); rails();
+})();
+</script>
+
+</body></html>
